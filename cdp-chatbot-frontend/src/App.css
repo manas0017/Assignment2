@@ -1,6 +1,6 @@
 /* Set background image for the entire chat */
 body {
-  background-image: url(images.png);/* Replace with your actual image */
+  background-image: url("./../public/images.png");/* Replace with your actual image */
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
