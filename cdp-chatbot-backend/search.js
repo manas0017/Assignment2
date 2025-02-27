@@ -13,11 +13,11 @@ const idx = lunr(function () {
   let idCounter = 0;
   docs.forEach((doc) => {
     doc.content.forEach((entry) => {
-      if (entry.text && entry.text.length > 20) { // Ignore empty or useless text
+      if (entry.text && entry.text.length > 20) { // Ignore short/empty texts
         this.add({
           id: idCounter,
           site: doc.site,
-          text: entry.text.join(" "), // Combine all text
+          text: entry.text.join(" "), // Merge text
           url: entry.url,
         });
         entry.id = idCounter;
@@ -27,7 +27,7 @@ const idx = lunr(function () {
   });
 });
 
-// Search function
+// Search function with improved ranking & merging
 function searchDocs(query) {
   let results = idx.search(query);
   
@@ -36,24 +36,28 @@ function searchDocs(query) {
     return { answer: "Sorry, I couldn't find an answer to that." };
   }
 
-  // Get the top match
-  let bestMatchId = parseInt(results[0].ref);
-  let bestMatch = docs.flatMap(d => d.content).find(entry => entry.id === bestMatchId);
+  // Get top 3 matches and merge content
+  let selectedMatches = results.slice(0, 3).map(result => {
+    let matchId = parseInt(result.ref);
+    return docs.flatMap(d => d.content).find(entry => entry.id === matchId);
+  }).filter(match => match && match.text);
 
-  if (!bestMatch || !bestMatch.text) {
-    console.log("❌ Error: bestMatch is undefined or missing text for ID:", bestMatchId);
+  if (selectedMatches.length === 0) {
+    console.log("❌ Error: No valid matches found");
     return { answer: "Sorry, I found something, but I can't display it properly." };
   }
 
-  // Extract only useful content
-  let usefulText = bestMatch.text
-    .filter(line => line.length > 50 && !line.includes("Home") && !line.includes("Index")) // Remove garbage
-    .join(" ") // Combine into a single response
-    .slice(0, 400); // Limit response
+  // Extract useful content from multiple results
+  let combinedAnswer = selectedMatches
+    .map(match => match.text
+      .filter(line => line.length > 50 && !line.includes("Home") && !line.includes("Index")) // Clean text
+      .join(" ") // Merge text
+    )
+    .join(" "); // Combine multiple answers
 
   return {
-    answer: usefulText + "...",
-    link: bestMatch.url,
+    answer: combinedAnswer.slice(0, 600) + "...", // Show 600 characters
+    link: selectedMatches[0].url, // Use first result’s link
   };
 }
 

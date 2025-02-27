@@ -1,50 +1,68 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
+import "./App.css"; // Import the CSS file
 
-function App() {
+function ChatBot() {
+  const [messages, setMessages] = useState([]);
   const [question, setQuestion] = useState("");
-  const [response, setResponse] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const chatRef = useRef(null);
 
-  const handleAsk = async () => {
+  useEffect(() => {
+    chatRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  const handleSend = async () => {
     if (!question.trim()) return;
+
+    const newMessage = { type: "user", text: question };
+    setMessages((prev) => [...prev, newMessage]);
+    setQuestion("");
     setLoading(true);
-    setResponse(null);
-    setError(null);
-    
+
     try {
       const res = await axios.post("http://localhost:5000/search", { question });
-      setResponse(res.data);
+      setMessages((prev) => [
+        ...prev,
+        { type: "bot", text: res.data.answer, link: res.data.link },
+      ]);
     } catch (err) {
-      setError("Something went wrong. Try again!");
+      setMessages((prev) => [
+        ...prev,
+        { type: "bot", text: "Something went wrong. Try again!" },
+      ]);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div style={{ textAlign: "center", marginTop: "50px" }}>
-      <h2>CDP Chatbot</h2>
-      <input
-        type="text"
-        value={question}
-        onChange={(e) => setQuestion(e.target.value)}
-        placeholder="Ask a 'how-to' question..."
-        style={{ padding: "10px", width: "60%", fontSize: "16px" }}
-      />
-      <button onClick={handleAsk} style={{ padding: "10px 15px", marginLeft: "10px" }}>Ask</button>
-
-      {loading && <p>Loading...</p>}
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      {response && (
-        <div style={{ marginTop: "20px" }}>
-          <p><strong>Answer:</strong> {response.answer}</p>
-          <a href={response.link} target="_blank" rel="noopener noreferrer">Read More</a>
-        </div>
-      )}
+    <div className="chat-container">
+      <div className="chat-box">
+        {messages.map((msg, index) => (
+          <div key={index} className={`message ${msg.type}`}>
+            {msg.text}
+            {msg.link && (
+              <a href={msg.link} target="_blank" rel="noopener noreferrer">
+                Read more
+              </a>
+            )}
+          </div>
+        ))}
+        {loading && <div className="message bot">Typing...</div>}
+        <div ref={chatRef}></div>
+      </div>
+      <div className="input-box">
+        <input
+          type="text"
+          value={question}
+          onChange={(e) => setQuestion(e.target.value)}
+          placeholder="Ask something..."
+        />
+        <button onClick={handleSend}>Send</button>
+      </div>
     </div>
   );
 }
 
-export default App;
+export default ChatBot;
