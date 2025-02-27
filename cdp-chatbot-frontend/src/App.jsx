@@ -22,7 +22,7 @@ function ChatBot() {
     setLoading(true);
 
     try {
-      const res = await axios.post("http://localhost:5000/search", { question });
+      const res = await axios.post("https://assignment2-sd2w.onrender.com/search", { question });
       setMessages((prev) => [
         ...prev,
         { type: "bot", text: res.data.answer, link: res.data.link },
