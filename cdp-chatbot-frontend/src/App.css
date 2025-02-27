@@ -24,52 +24,64 @@ body {
   overflow-y: auto;
   display: flex;
   flex-direction: column;
+  scrollbar-width: thin;
+  scrollbar-color: #444 #1e1e1e;
 }
 
+/* Chat message styles */
 .message {
   max-width: 80%;
-  padding: 10px;
-  border-radius: 10px;
+  padding: 12px;
+  border-radius: 12px;
   margin-bottom: 10px;
+  word-wrap: break-word;
 }
 
 .user {
   background: #007bff;
   color: white;
   align-self: flex-end;
+  border-bottom-right-radius: 2px;
 }
 
 .bot {
   background: #2a2a2a;
   color: white;
   align-self: flex-start;
+  border-bottom-left-radius: 2px;
 }
 
-a {
-  color: #1e90ff;
-  text-decoration: none;
-  margin-top: 5px;
-  display: block;
-}
-
+/* Chat input box */
 .input-box {
   display: flex;
+  align-items: center;
   padding: 10px;
   background: #222;
+  border-top: 1px solid #333;
 }
 
 input {
   flex: 1;
   padding: 10px;
   border: none;
-  border-radius: 5px;
+  border-radius: 20px;
+  background: #333;
+  color: white;
+  font-size: 16px;
+  outline: none;
 }
 
 button {
-  background: #007bff;
-  color: white;
+  background: none;
   border: none;
-  padding: 10px;
-  margin-left: 10px;
   cursor: pointer;
+  margin-left: -40px;
+  padding: 5px;
+  font-size: 20px;
+  color: #007bff;
+  transition: transform 0.2s ease;
+}
+
+button:hover {
+  transform: scale(1.2);
 }

@@ -7,6 +7,7 @@ function ChatBot() {
   const [question, setQuestion] = useState("");
   const [loading, setLoading] = useState(false);
   const chatRef = useRef(null);
+  const inputRef = useRef(null);
 
   useEffect(() => {
     chatRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -36,6 +37,13 @@ function ChatBot() {
     }
   };
 
+  // Handle "Enter" key press
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      handleSend();
+    }
+  };
+
   return (
     <div className="chat-container">
       <div className="chat-box">
@@ -54,12 +62,14 @@ function ChatBot() {
       </div>
       <div className="input-box">
         <input
+          ref={inputRef}
           type="text"
           value={question}
           onChange={(e) => setQuestion(e.target.value)}
+          onKeyDown={handleKeyPress}
           placeholder="Ask something..."
         />
-        <button onClick={handleSend}>Send</button>
+        <button onClick={handleSend}>🚀</button>
       </div>
     </div>
   );

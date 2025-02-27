@@ -13,11 +13,11 @@ const idx = lunr(function () {
   let idCounter = 0;
   docs.forEach((doc) => {
     doc.content.forEach((entry) => {
-      if (entry.text && entry.text.length > 20) { // Ignore short/empty texts
+      if (entry.text && entry.text.length > 20) { // Ignore empty/useless text
         this.add({
           id: idCounter,
           site: doc.site,
-          text: entry.text.join(" "), // Merge text
+          text: entry.text.join(" "), 
           url: entry.url,
         });
         entry.id = idCounter;
@@ -27,41 +27,54 @@ const idx = lunr(function () {
   });
 });
 
-// Search function with improved ranking & merging
-function searchDocs(query) {
-  let results = idx.search(query);
+// List of CDP-related keywords
+const CDP_PLATFORMS = [
+    "Segment", "Lytics", "Zeotap", "mParticle", "Adobe Experience Platform",
+    "Tealium", "BlueConic", "Treasure Data", "Simon Data", "Amperity"
+  ];
   
+  function isCDPRelated(query) {
+    return CDP_PLATFORMS.some(platform => query.toLowerCase().includes(platform.toLowerCase()));
+  }
+
+function searchDocs(query) {
+  if (!isCDPRelated(query)) {
+    return { answer: "This chatbot is focused on Customer Data Platforms. Try asking about CDPs!" };
+  }
+
+  let results = idx.search(query);
+
   if (results.length === 0) {
-    console.log("❌ No results found for:", query);
     return { answer: "Sorry, I couldn't find an answer to that." };
   }
 
-  // Get top 3 matches and merge content
-  let selectedMatches = results.slice(0, 3).map(result => {
-    let matchId = parseInt(result.ref);
-    return docs.flatMap(d => d.content).find(entry => entry.id === matchId);
-  }).filter(match => match && match.text);
+  let bestMatch = results
+    .map(result => ({ 
+      ref: parseInt(result.ref), 
+      score: result.score 
+    }))
+    .filter(match => match.score > 0.2) // Ignore low-score matches
+    .sort((a, b) => b.score - a.score)[0]; // Get best result
 
-  if (selectedMatches.length === 0) {
-    console.log("❌ Error: No valid matches found");
+  if (!bestMatch) {
+    return { answer: "Sorry, I couldn't find an answer to that." };
+  }
+
+  let matchedEntry = docs.flatMap(d => d.content).find(entry => entry.id === bestMatch.ref);
+
+  if (!matchedEntry || !matchedEntry.text) {
     return { answer: "Sorry, I found something, but I can't display it properly." };
   }
 
-  // Extract useful content from multiple results
-  let combinedAnswer = selectedMatches
-    .map(match => match.text
-      .filter(line => line.length > 50 && !line.includes("Home") && !line.includes("Index")) // Clean text
-      .join(" ") // Merge text
-    )
-    .join(" "); // Combine multiple answers
+  let usefulText = matchedEntry.text
+    .filter(line => line.length > 50 && !line.includes("Home") && !line.includes("Index")) 
+    .join(" ") 
+    .slice(0, 400);
 
   return {
-    answer: combinedAnswer.slice(0, 600) + "...", // Show 600 characters
-    link: selectedMatches[0].url, // Use first result’s link
+    answer: usefulText + "...",
+    link: matchedEntry.url,
   };
 }
-
-// Test example
-console.log(searchDocs("How to set up a new source in Segment?"));
 
 module.exports = { searchDocs };
