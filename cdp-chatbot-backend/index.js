@@ -8,14 +8,15 @@ app.use(bodyParser.json());
 app.use(cors());
 
 app.post("/search", (req, res) => {
-  const query = req.body.query;
-  if (!query) {
-    return res.status(400).json({ error: "Query is required!" });
-  }
+    const question = req.body.question;
+    if (!question) {
+        return res.status(400).json({ error: "question is required!" });
+    }
 
-  const result = searchDocs(query);
-  res.json({ answer: result });
+    const result = searchDocs(question);
+    res.json(result); // Send the object directly, no extra "answer" wrapper
 });
+
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
