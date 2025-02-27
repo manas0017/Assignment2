@@ -1,87 +1,120 @@
+/* Set background image for the entire chat */
 body {
-  background-color: #121212;
+  background-image: url('images.png');/* Replace with your actual image */
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
   font-family: Arial, sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
 }
 
+/* Chat container styling */
 .chat-container {
   width: 400px;
   height: 600px;
-  background: #1e1e1e;
-  border-radius: 10px;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+  margin: 50px auto;
 }
-
+/* Chatbox styling */
 .chat-box {
   flex: 1;
   padding: 15px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  scrollbar-width: thin;
-  scrollbar-color: #444 #1e1e1e;
+  gap: 10px;
+}
+.sendbutton{
+  background: transparent;
+  border : none ;
+
 }
 
-/* Chat message styles */
+.sendbutton img{
+  width: 35px;
+  height: 30px;
+}
+/* User and bot message styling */
 .message {
+  padding: 10px 15px;
+  border-radius: 10px;
   max-width: 80%;
-  padding: 12px;
-  border-radius: 12px;
-  margin-bottom: 10px;
   word-wrap: break-word;
 }
 
-.user {
-  background: #007bff;
-  color: white;
+.message.user {
   align-self: flex-end;
-  border-bottom-right-radius: 2px;
-}
-
-.bot {
-  background: #2a2a2a;
+  background: #81838D;
   color: white;
-  align-self: flex-start;
-  border-bottom-left-radius: 2px;
 }
 
-/* Chat input box */
+.message.bot {
+  align-self: flex-start;
+  background: #f1f1f1;
+  color: #81838D;
+}
+
+/* Input section */
 .input-box {
   display: flex;
-  align-items: center;
   padding: 10px;
-  background: #222;
-  border-top: 1px solid #333;
+  background: #fff;
+  border-top: 1px solid #ddd;
 }
 
-input {
+.input-box input {
   flex: 1;
   padding: 10px;
   border: none;
-  border-radius: 20px;
-  background: #333;
-  color: white;
-  font-size: 16px;
+  border-radius: 5px;
   outline: none;
+  font-size: 16px;
 }
 
-button {
-  background: none;
+.send-btn {
+  background: #81838D;
+  color: white;
   border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  margin-left: 10px;
   cursor: pointer;
-  margin-left: -40px;
-  padding: 5px;
-  font-size: 20px;
-  color: #007bff;
-  transition: transform 0.2s ease;
+  font-size: 18px;
 }
 
-button:hover {
-  transform: scale(1.2);
+.send-btn:hover {
+  background: #69afff67;
+}
+
+/* Make scrollbar hidden */
+.chat-box::-webkit-scrollbar {
+  display: none;
+}
+
+.zbot{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.circle img{
+  width: 100px;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color:#81838D; 
+  border-radius: 50%;
+  color: white;
+  font-size: 50px;
+  margin: 20px;
+
+}
+.center{
+  color  : #81838D ; 
+
 }

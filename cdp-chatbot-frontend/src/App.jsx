@@ -47,6 +47,13 @@ function ChatBot() {
   return (
     <div className="chat-container">
       <div className="chat-box">
+        <div className="zbot">
+        <div className="circle">
+        <img src="zbot.png" alt="Description" />
+        </div>
+
+        <span className="center">Zbot</span>
+        </div>
         {messages.map((msg, index) => (
           <div key={index} className={`message ${msg.type}`}>
             {msg.text}
@@ -69,7 +76,9 @@ function ChatBot() {
           onKeyDown={handleKeyPress}
           placeholder="Ask something..."
         />
-        <button onClick={handleSend}>🚀</button>
+        <button className="sendbutton" onClick={handleSend}>
+          <img src="Vector.svg" alt="" />
+        </button>
       </div>
     </div>
   );
