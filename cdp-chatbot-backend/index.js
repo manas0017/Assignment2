@@ -1,27 +1,21 @@
 const express = require("express");
+const bodyParser = require("body-parser");
 const cors = require("cors");
-const { scrapeDocs } = require("./scraper");
 const { searchDocs } = require("./search");
 
 const app = express();
+app.use(bodyParser.json());
 app.use(cors());
-app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.send("Chatbot Backend is Running!");
-});
-
-// API to handle user questions
-app.post("/ask", async (req, res) => {
-  const question = req.body.question;
-  if (!question) {
-    return res.status(400).json({ message: "Please provide a question." });
+app.post("/search", (req, res) => {
+  const query = req.body.query;
+  if (!query) {
+    return res.status(400).json({ error: "Query is required!" });
   }
-  
-  const answer = searchDocs(question);
-  res.json({ answer });
+
+  const result = searchDocs(query);
+  res.json({ answer: result });
 });
 
-app.listen(5000, () => {
-  console.log("Server is running on port 5000");
-});
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
